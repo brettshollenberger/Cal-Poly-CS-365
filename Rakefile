@@ -9,7 +9,7 @@ DATASETS = ["csu", "cars", "bakery", "students", "marathon", "airlines", "wine",
 datasets *DATASETS
 
 desc "Build the Cal Poly CS-365 datasets"
-task :default => "mysql:import"
+task :default => "mysql:build"
 
 directory "install/datasets"
 
