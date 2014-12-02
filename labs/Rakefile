@@ -8,14 +8,25 @@ DATASETS = ["csu", "cars", "bakery", "students", "marathon", "airlines", "wine",
 
 datasets *DATASETS
 
+desc "Build the Cal Poly CS-365 datasets"
+task :default => :mysql
+
 directory "datasets"
 
+desc "Download the CSVs required to build the tables"
 task "download_datasets" => ["datasets"].concat(DATASETS.map { |d| "datasets/#{d}" })
-task "mysql"         => "mysql:import"
-task "mysql:setup"   => "mysql:setup:all"
-task "mysql:import"  => "mysql:import:all"
-task "mysql:clobber" => "mysql:clobber:all"
-task "mysql:rebuild" => "mysql:rebuild:all"
+
+desc "Create the databases and tables"
+task "mysql:setup"       => "mysql:setup:all"
+
+desc "Import CSV data into the tables"
+task "mysql:import"      => "mysql:import:all"
+
+desc "Destroy the databases"
+task "mysql:clobber"     => "mysql:clobber:all"
+
+desc "Destroy the databases & re-build them"
+task "mysql:rebuild"     => "mysql:rebuild:all"
 
 namespace :mysql do
   namespace :setup do
