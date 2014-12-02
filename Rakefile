@@ -13,19 +13,21 @@ task :default => "mysql:import"
 
 directory "install/datasets"
 
-desc "Download the CSVs required to build the tables"
 task "download_datasets" => ["install/datasets"].concat(DATASETS.map { |d| "install/datasets/#{d}" })
 
 desc "Create the databases and tables"
 task "mysql:setup"       => "mysql:setup:all"
 
 desc "Import CSV data into the tables"
-task "mysql:import"      => "mysql:import:all"
+task "build"             => "mysql:build"
+task "mysql:build"       => "mysql:build:all"
 
 desc "Destroy the databases"
+task "clobber"           => "mysql:clobber"
 task "mysql:clobber"     => "mysql:clobber:all"
 
 desc "Destroy the databases & re-build them"
+task "rebuild"           => "mysql:rebuild"
 task "mysql:rebuild"     => "mysql:rebuild:all"
 
 namespace :mysql do
@@ -39,7 +41,7 @@ namespace :mysql do
     task :all => DATASETS
   end
 
-  namespace :import do
+  namespace :build do
     DATASETS.each do |dataset|
       import_database dataset => "mysql:setup:#{dataset}" do
         sh "ruby ./install/import/#{dataset.upcase}-insert.rake"
@@ -59,7 +61,7 @@ namespace :mysql do
 
   namespace :rebuild do
     DATASETS.each do |dataset|
-      task dataset => ["mysql:clobber:#{dataset}", "mysql:import:#{dataset}"]
+      task dataset => ["mysql:clobber:#{dataset}", "mysql:build:#{dataset}"]
     end
 
     task :all => DATASETS
