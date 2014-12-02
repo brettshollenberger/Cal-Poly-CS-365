@@ -1,7 +1,6 @@
-DROP DATABASE IF EXISTS datasets_csu;
-CREATE DATABASE datasets_csu;
+CREATE DATABASE csu;
 
-USE datasets_csu;
+USE csu;
 
 CREATE TABLE campuses (
   id integer PRIMARY KEY NOT NULL AUTO_INCREMENT,

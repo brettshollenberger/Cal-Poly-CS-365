@@ -1,7 +1,6 @@
-DROP DATABASE IF EXISTS datasets_airlines;
-CREATE DATABASE datasets_airlines;
+CREATE DATABASE airlines;
 
-USE datasets_airlines;
+USE airlines;
 
 CREATE TABLE airlines (
   id integer PRIMARY KEY NOT NULL AUTO_INCREMENT,

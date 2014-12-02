@@ -1,7 +1,6 @@
-DROP DATABASE IF EXISTS datasets_wines;
-CREATE DATABASE datasets_wines;
+CREATE DATABASE wines;
 
-USE datasets_wines;
+USE wines;
 
 CREATE TABLE appelations (
   id integer PRIMARY KEY NOT NULL AUTO_INCREMENT,

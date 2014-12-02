@@ -1,7 +1,6 @@
-DROP DATABASE IF EXISTS datasets_inn;
-CREATE DATABASE datasets_inn;
+CREATE DATABASE inn;
 
-USE datasets_inn;
+USE inn;
 
 CREATE TABLE rooms (
   id varchar(3) PRIMARY KEY NOT NULL,

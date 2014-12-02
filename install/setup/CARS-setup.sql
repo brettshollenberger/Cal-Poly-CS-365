@@ -1,7 +1,6 @@
-DROP DATABASE IF EXISTS datasets_cars;
-CREATE DATABASE datasets_cars;
+CREATE DATABASE cars;
 
-USE datasets_cars;
+USE cars;
 
 CREATE TABLE continents (
   id integer PRIMARY KEY NOT NULL AUTO_INCREMENT,

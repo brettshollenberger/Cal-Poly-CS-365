@@ -1,7 +1,6 @@
-DROP DATABASE IF EXISTS datasets_students;
-CREATE DATABASE datasets_students;
+CREATE DATABASE students;
 
-USE datasets_students;
+USE students;
 
 CREATE TABLE teachers (
   id integer PRIMARY KEY NOT NULL AUTO_INCREMENT,

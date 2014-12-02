@@ -2,14 +2,14 @@ require "active_support/hash_with_indifferent_access"
 require_relative "./mysql_table"
 
 DATASET_MAP = {
-  :csu => "datasets_csu",
-  :cars => "datasets_cars",
-  :bakery => "datasets_bakery",
-  :students => "datasets_students",
-  :marathon => "datasets_marathon",
-  :airlines => "datasets_airlines",
-  :wine => "datasets_wines",
-  :inn => "datasets_inn"
+  :csu => "csu",
+  :cars => "cars",
+  :bakery => "bakery",
+  :students => "students",
+  :marathon => "marathon",
+  :airlines => "airlines",
+  :wine => "wines",
+  :inn => "inn"
 }
 
 DATASET_TABLES = {

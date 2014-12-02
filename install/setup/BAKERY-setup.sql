@@ -1,7 +1,6 @@
-DROP DATABASE IF EXISTS datasets_bakery;
-CREATE DATABASE datasets_bakery;
+CREATE DATABASE bakery;
 
-USE datasets_bakery;
+USE bakery;
 
 CREATE TABLE customers (
   id integer PRIMARY KEY NOT NULL AUTO_INCREMENT,

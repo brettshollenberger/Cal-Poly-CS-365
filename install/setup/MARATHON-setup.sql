@@ -1,7 +1,6 @@
-DROP DATABASE IF EXISTS datasets_marathon;
-CREATE DATABASE datasets_marathon;
+CREATE DATABASE marathon;
 
-USE datasets_marathon;
+USE marathon;
 
 CREATE TABLE runners (
   id integer PRIMARY KEY NOT NULL AUTO_INCREMENT,
