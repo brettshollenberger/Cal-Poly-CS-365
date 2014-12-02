@@ -1,4 +1,4 @@
-Cal-Poly-CS-365
+Cal Poly CS365
 ===============
 
 ### Installing the Databases
