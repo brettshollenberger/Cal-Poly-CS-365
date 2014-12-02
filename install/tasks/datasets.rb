@@ -1,11 +1,11 @@
 def dataset(name)
-  file "datasets/#{name}.zip" do
+  file "install/datasets/#{name}.zip" do
     url = "http://users.csc.calpoly.edu/~dekhtyar/365-Winter2013/data/#{name.upcase}/#{name.upcase}.zip"
-    sh "curl #{url} > datasets/#{name}.zip"
+    sh "curl #{url} > install/datasets/#{name}.zip"
   end
 
-  file "datasets/#{name}" => "datasets/#{name}.zip" do
-    cd "datasets" do
+  file "install/datasets/#{name}" => "install/datasets/#{name}.zip" do
+    cd "install/datasets" do
       sh "unzip #{name}.zip -d #{name}"
     end
   end
