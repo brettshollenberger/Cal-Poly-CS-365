@@ -10,5 +10,5 @@ bundle install && rake
 ### Destroying the Databases
 
 ```bash
-rake mysql:clobber
+rake clobber
 ```
