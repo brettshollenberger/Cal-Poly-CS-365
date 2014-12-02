@@ -1,20 +1,20 @@
-require_relative "./lib/dataset_mapper"
-require_relative "./tasks/datasets"
-require_relative "./tasks/import_database"
-require_relative "./tasks/setup_database"
-require_relative "./tasks/clobber"
+require_relative "./install/lib/dataset_mapper"
+require_relative "./install/tasks/datasets"
+require_relative "./install/tasks/import_database"
+require_relative "./install/tasks/setup_database"
+require_relative "./install/tasks/clobber"
 
 DATASETS = ["csu", "cars", "bakery", "students", "marathon", "airlines", "wine", "inn"]
 
 datasets *DATASETS
 
 desc "Build the Cal Poly CS-365 datasets"
-task :default => :mysql
+task :default => "mysql:import"
 
-directory "datasets"
+directory "install/datasets"
 
 desc "Download the CSVs required to build the tables"
-task "download_datasets" => ["datasets"].concat(DATASETS.map { |d| "datasets/#{d}" })
+task "download_datasets" => ["install/datasets"].concat(DATASETS.map { |d| "install/datasets/#{d}" })
 
 desc "Create the databases and tables"
 task "mysql:setup"       => "mysql:setup:all"
@@ -32,7 +32,7 @@ namespace :mysql do
   namespace :setup do
     DATASETS.each do |dataset|
       setup_database dataset => :download_datasets do
-        sh "mysql -u root < setup/#{dataset}-setup.sql"
+        sh "mysql -u root < install/setup/#{dataset}-setup.sql"
       end
     end
 
@@ -42,7 +42,7 @@ namespace :mysql do
   namespace :import do
     DATASETS.each do |dataset|
       import_database dataset => "mysql:setup:#{dataset}" do
-        sh "ruby ./import/#{dataset.upcase}-insert.rake"
+        sh "ruby ./install/import/#{dataset.upcase}-insert.rake"
       end
     end
 
