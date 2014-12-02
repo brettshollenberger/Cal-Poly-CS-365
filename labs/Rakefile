@@ -1,121 +1,26 @@
-require "pry"
-require "mysql2"
-require "active_support/hash_with_indifferent_access"
+require_relative "./lib/dataset_mapper"
+require_relative "./tasks/datasets"
+require_relative "./tasks/import_database"
+require_relative "./tasks/setup_database"
+require_relative "./tasks/clobber"
 
 DATASETS = ["csu", "cars", "bakery", "students", "marathon", "airlines", "wine", "inn"]
 
-DATASET_MAP = {
-  :csu => "datasets_csu",
-  :cars => "datasets_cars",
-  :bakery => "datasets_bakery",
-  :students => "datasets_students",
-  :marathon => "datasets_marathon",
-  :airlines => "datasets_airlines",
-  :wine => "datasets_wines",
-  :inn => "datasets_inn"
-}
-
-DATASET_TABLES = {
-  :airlines => ["airlines", "airports"],
-  :bakery => ["goods", "customers", "receipts", "receipt_items"],
-  :inn => ["rooms", "reservations"],
-  :marathon => ["runners"],
-  :students => ["teachers", "students"],
-  :wine => ["appelations", "grapes", "wines"]
-}
-
-class MysqlTable
-  attr_accessor :database_name, :table_name
-
-  def initialize(database_name, table_name)
-    @database_name = database_name
-    @table_name    = table_name
-  end
-
-  def count
-    client.query("select count(*) from #{table_name}").first.values.first
-  end
-
-  def delete_all
-    client.query("delete from #{table_name}")
-  end
-
-private
-  def client
-    Mysql2::Client.new(:host => "localhost", :username => "root", :database => database_name)
-  end
-end
-
-class DatasetMapper
-  def self.dataset_name(dataset)
-    HashWithIndifferentAccess.new(DATASET_MAP)[dataset]
-  end
-
-  def self.dataset_tables(dataset)
-    HashWithIndifferentAccess.new(DATASET_TABLES)[dataset].map do |table_name|
-      MysqlTable.new(dataset_name(dataset), table_name)
-    end
-  end
-end
-
-def dataset(name)
-  file "datasets/#{name}.zip" do
-    url = "http://users.csc.calpoly.edu/~dekhtyar/365-Winter2013/data/#{name.upcase}/#{name.upcase}.zip"
-    sh "curl #{url} > datasets/#{name}.zip"
-  end
-
-  file "datasets/#{name}" => "datasets/#{name}.zip" do
-    cd "datasets" do
-      sh "unzip #{name}.zip -d #{name}"
-    end
-  end
-end
-
-def datasets(*names)
-  names.each do |name|
-    dataset name
-  end
-end
-
-def setup_database(*args, &block)
-  name = DatasetMapper.dataset_name(args.first.keys.first)
-
-  task args.first do
-    begin
-      verbose(false) do
-        sh "echo 'use #{name};' | mysql -u root 2> /dev/null"
-      end
-    rescue => e
-      block.call
-    end
-  end
-end
-
-def import_database(*args, &block)
-  dataset = args.first.keys.first
-  name    = DatasetMapper.dataset_name(dataset)
-  tables  = DatasetMapper.dataset_tables(dataset)
-
-  task args.first do
-    unless tables.all? { |table| table.count > 0 }
-      tables.each(&:delete_all)
-
-      block.call
-    end
-  end
-end
-
 datasets *DATASETS
 
-file "datasets" => DATASETS.map { |d| "datasets/#{d}" }
+directory "datasets"
 
-task "mysql:setup" => "mysql:setup:all"
-task "mysql:import" => "mysql:import:all"
+task "download_datasets" => ["datasets"].concat(DATASETS.map { |d| "datasets/#{d}" })
+task "mysql"         => "mysql:import"
+task "mysql:setup"   => "mysql:setup:all"
+task "mysql:import"  => "mysql:import:all"
+task "mysql:clobber" => "mysql:clobber:all"
+task "mysql:rebuild" => "mysql:rebuild:all"
 
 namespace :mysql do
   namespace :setup do
     DATASETS.each do |dataset|
-      setup_database dataset => :datasets do
+      setup_database dataset => :download_datasets do
         sh "mysql -u root < setup/#{dataset}-setup.sql"
       end
     end
@@ -124,30 +29,28 @@ namespace :mysql do
   end
 
   namespace :import do
-    import_database :airlines => "mysql:setup" do
-      sh "ruby ./import/AIRLINES-insert.rake"
+    DATASETS.each do |dataset|
+      import_database dataset => "mysql:setup:#{dataset}" do
+        sh "ruby ./import/#{dataset.upcase}-insert.rake"
+      end
     end
 
-    import_database :bakery => "mysql:setup" do
-      sh "ruby ./import/BAKERY-insert.rake"
+    task :all => DATASETS
+  end
+
+  namespace :clobber do
+    DATASETS.each do |dataset|
+      clobber dataset
     end
 
-    import_database :inn => "mysql:setup" do
-      sh "ruby ./import/INN-insert.rake"
+    task :all => DATASETS
+  end
+
+  namespace :rebuild do
+    DATASETS.each do |dataset|
+      task dataset => ["mysql:clobber:#{dataset}", "mysql:import:#{dataset}"]
     end
 
-    import_database :marathon => "mysql:setup" do
-      sh "ruby ./import/MARATHON-insert.rake"
-    end
-
-    import_database :students => "mysql:setup" do
-      sh "ruby ./import/STUDENTS-insert.rake"
-    end
-
-    import_database :wine => "mysql:setup" do
-      sh "ruby ./import/WINE-insert.rake"
-    end
-
-    task :all => [:airlines, :bakery, :inn, :marathon, :students, :wine]
+    task :all => DATASETS
   end
 end
