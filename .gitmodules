@@ -1,0 +1,18 @@
+[submodule "labs/databases-course-lab-6"]
+	path = labs/databases-course-lab-6
+	url = git@github.com:brettshollenberger/databases-course-lab-6.git
+[submodule "labs/database-course-lab-5"]
+	path = labs/database-course-lab-5
+	url = git@github.com:brettshollenberger/database-course-lab-5.git
+[submodule "labs/database-course-lab-4"]
+	path = labs/database-course-lab-4
+	url = git@github.com:brettshollenberger/database-course-lab-4.git
+[submodule "labs/database-course-lab3"]
+	path = labs/database-course-lab3
+	url = git@github.com:brettshollenberger/database-course-lab3.git
+[submodule "labs/database-course-lab2"]
+	path = labs/database-course-lab2
+	url = git@github.com:brettshollenberger/database-course-lab2.git
+[submodule "labs/database-course-lab1"]
+	path = labs/database-course-lab1
+	url = git@github.com:brettshollenberger/database-course-lab1.git
