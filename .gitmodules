@@ -16,3 +16,6 @@
 [submodule "labs/database-course-lab1"]
 	path = labs/database-course-lab1
 	url = git@github.com:brettshollenberger/database-course-lab1.git
+[submodule "labs/databases-course-lab-7"]
+	path = labs/databases-course-lab-7
+	url = git@github.com:brettshollenberger/databases-course-lab-7.git
